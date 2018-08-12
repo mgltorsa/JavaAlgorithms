@@ -18,7 +18,7 @@ public class RotationMatrix {
 		int[][] matrix = readMatrix(br);
 		//Test, TODO totalRotation method.
 		int total = totalRotations(matrix);		
-		bw.write("Total" + total);
+		bw.write("Total " + (total/4));
 		bw.close();
 		br.close();
 	}
@@ -32,8 +32,8 @@ public class RotationMatrix {
 
 			for (int j = 0; j < matrix.length; j++) {
 				relativePosition = matrix[i][j] / matrix.length;
-				iDestination = relativePosition;
-				jDestination = matrix[i][j] - ( matrix.length * relativePosition) -1 ;				
+				iDestination = relativePosition;	
+				jDestination = matrix[i][j] - (relativePosition) -1 ;				
 				total += Math.abs(iDestination - i) + Math.abs(jDestination - j);
 
 			}
