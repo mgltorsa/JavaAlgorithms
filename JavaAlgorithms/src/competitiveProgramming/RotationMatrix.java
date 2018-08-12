@@ -16,8 +16,9 @@ public class RotationMatrix {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
 		int[][] matrix = readMatrix(br);
-		int total = totalRotations(matrix);
-		bw.write("Total rotations " + total);
+		//Test, TODO totalRotation method.
+		int total = totalRotations(matrix);		
+		bw.write("Total" + total);
 		bw.close();
 		br.close();
 	}
