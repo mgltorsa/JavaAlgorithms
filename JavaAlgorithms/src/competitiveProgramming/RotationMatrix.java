@@ -2,7 +2,6 @@ package competitiveProgramming;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
@@ -11,40 +10,60 @@ import java.io.OutputStreamWriter;
  *
  */
 public class RotationMatrix {
-	
-	public static void main(String[] args) throws Exception{
+
+	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		
+
 		int[][] matrix = readMatrix(br);
-		sortByRotations(matrix);
+		int total = totalRotations(matrix);
+		bw.write("Total rotations " + total);
+		bw.close();
+		br.close();
 	}
 
 	/**
 	 * @param matrix
 	 */
-	private static void sortByRotations(int[][] matrix) {
-		//
-		
+	private static int totalRotations(int[][] matrix) {
+		int iDestination, jDestination, relativePosition, total = 0;
+		for (int i = 0; i < matrix.length; i++) {
+
+			for (int j = 0; j < matrix.length; j++) {
+				relativePosition = matrix[i][j] / matrix.length;
+				iDestination = relativePosition;
+				jDestination = matrix[i][j] - ( matrix.length * relativePosition) -1 ;				
+				total += Math.abs(iDestination - i) + Math.abs(jDestination - j);
+
+			}
+		}
+		return total;
 	}
 
-	/**This method reads an integer n for the creation of an nxn array,
-	 * then reads lines with space-separated integers 
+	/**
+	 * This method reads an integer n for the creation of an nxn matrix, then reads
+	 * lines with space-separated integers
+	 * 
 	 * @param br
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private static int[][] readMatrix(BufferedReader br) throws Exception {
 		int n = Integer.parseInt(br.readLine());
 		int[][] matrix = new int[n][n];
-		String line;
-		while((line=br.readLine())!=null && !line.equals("")) {
-			for (int i = 0; i < matrix.length; i++) {
-				for (int j = 0; j < matrix[0].length; j++) {
-					matrix[i][j]=Integer.parseInt(line.charAt(j)+"");
-				}
+		String line = br.readLine();
+		int i = 0;
+
+		do {
+			String[] data = line.split(" ");
+
+			for (int j = 0; j < matrix[0].length; j++) {
+				matrix[i][j] = Integer.parseInt(data[j]);
 			}
-		}
+			
+			i++;
+			line = br.readLine();
+		} while (line != null && !line.equals(""));
 		return matrix;
 	}
 }
