@@ -7,6 +7,6 @@ package competitiveProgramming;
  * @author Miguel
  *
  */
-public class listKattis {
+public class ListKattis {
 
 }
