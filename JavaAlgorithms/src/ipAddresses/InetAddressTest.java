@@ -33,13 +33,7 @@ public class InetAddressTest {
 			
 			addresses.forEach(item -> 
 					System.out.println(item)				
-			);
-
-			
-			
-
-			
-			
+			);	
 			
 			
 		}catch(Exception e) {
