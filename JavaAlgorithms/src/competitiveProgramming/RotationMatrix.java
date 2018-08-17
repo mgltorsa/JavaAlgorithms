@@ -18,7 +18,7 @@ public class RotationMatrix {
 		int[][] matrix = readMatrix(br);
 		//Test, TODO totalRotation method.
 		int total = totalRotations(matrix);		
-		bw.write("Total " + (total/4));
+		bw.write("Total " + (total));
 		bw.close();
 		br.close();
 	}
