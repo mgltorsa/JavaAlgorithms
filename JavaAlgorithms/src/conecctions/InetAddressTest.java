@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ipAddresses;
+package conecctions;
 
 import java.net.*;
 import java.util.ArrayList;
@@ -18,6 +18,10 @@ public class InetAddressTest {
 	public static void main(String[] args) {
 		try {
 			InetAddress inet = InetAddress.getLocalHost();
+			InetAddress[] arr = InetAddress.getAllByName("190.99.133.226");
+			for(InetAddress i : arr) {
+				System.out.println(i);
+			}
 			System.out.println(inet);
 			inet = InetAddress.getByName("www.nasa.gov");
 			System.out.println(inet);
