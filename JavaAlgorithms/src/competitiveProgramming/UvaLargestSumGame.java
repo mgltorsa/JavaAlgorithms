@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
  * @author Miguel
  *
  */
-public class Uva_Largest_sum_game {
+public class UvaLargestSumGame {
 
 	public static void main(String[] args) throws Exception{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

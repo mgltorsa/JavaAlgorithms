@@ -7,7 +7,7 @@ package conecctions;
  * @author Miguel
  *
  */
-public enum ConnectionType {
+public enum Type {
 	Server,
 	Client
 }

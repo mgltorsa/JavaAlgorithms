@@ -5,79 +5,83 @@ package conecctions;
 
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Miguel
  *
  */
-public abstract class Connection {
+public abstract class Connection implements IConnection {
 
 	ReentrantLock lock;
 	private int port;
-	private ConnectionType type;
-	private String host;
-	String serverMessage;
-	Socket socket;
-	ServerSocket serverSocket;
-	DataOutputStream clientOutput, serverOutput;
+	private Type type;
+	DataOutputStream output;
 
 	/**
 	 * 
 	 */
-	public Connection(ConnectionType type) {
+//	@SuppressWarnings("resource")
+	public Connection(Type type) {
 		this.type = type;
-		port = 1234;
+		this.port=1234;
 		lock = new ReentrantLock();
-		switch (type) {
-		case Server:
-			setPort(port);
-			break;
-		case Client:
-			setHost("localhost");
-			setPort(port);
-			break;
-		default:
-			throw new IllegalArgumentException();
+//		if(!isPortAvailable(port) && type!=Type.Client) {
+//			try {
+//				port = new ServerSocket(port).getLocalPort();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+	}
+
+
+	public boolean setPort(int port) {
+		boolean settedPort = isPortAvailable(port);
+		if(settedPort) {
+			this.port=port;
 		}
-
+		return settedPort;
 	}
+	
 
-
-
+	
 	/**
-	 * @param port the port to set
+	 * @param port2
+	 * @return
 	 */
-	public void setPort(int port) {
-		this.port = port;
+	private boolean isPortAvailable(int port) {
+		boolean isAvailable = true;
+		try {
+			ServerSocket socket = new ServerSocket(port);
+			socket.close();
+		}catch(Exception e) {
+			isAvailable=false;
+		}
+		return isAvailable;
 	}
+
 
 	/**
 	 * @return the port
 	 */
 	public int getPort() {
+		
 		return port;
 	}
 
-	/**
-	 * @param host the host to set
-	 */
-	public void setHost(String host) {
-		this.host = host;
+	public DataOutputStream getOutputStream() {
+		return output;
 	}
-
-	/**
-	 * @return the host
-	 */
-	public String getHost() {
-		return host;
-	}
-
+	
+	public void setOutputStream(DataOutputStream stream) {
+		this.output=stream;
+	}	
+	
 	/**
 	 * @return the type
 	 */
-	public ConnectionType getType() {
+	public Type getConnectionType() {
 		return type;
 	}
 

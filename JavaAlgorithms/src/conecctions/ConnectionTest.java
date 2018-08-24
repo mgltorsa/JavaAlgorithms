@@ -3,75 +3,70 @@
  */
 package conecctions;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 /**
  * @author Miguel
  *
  */
 public class ConnectionTest {
 
-	private static Server server;
+	public static Server server;
 	
-	public static void main(String[] args) throws InterruptedException {
+	public static class S{
+		ServerSocket ss;
 		
-		
-		Thread serverT = new Thread(getRunnableServer());
-//		Thread client = new Thread (getRunnableClient());
-		serverT.start();
-//		client.start();
-		
-		Client client = new Client();
-		while(server==null || !server.isOnline()) {
-			Thread.sleep(500);
+		public S() throws IOException {
+			ss=new ServerSocket(1234);
 		}
 		
-		client.startClient();
-		
-	}
-	
-	/**
-	 * @return
-	 */
-	private static Runnable getRunnableClient() {
-		Runnable runnable = new Runnable() {
-
-			@Override
-			public void run() {
-				Client client = new Client();
-				String message = ConnectionTest.getClientMessages();
-				client.startClient(message);
+		public void start() throws IOException {
+			Socket cs = ss.accept();
+			PrintWriter bw =new PrintWriter( cs.getOutputStream(),true);
+			bw.println("recibido en: "+InetAddress.getLocalHost());
+			String line;
+			BufferedReader br = new BufferedReader(new InputStreamReader(cs.getInputStream()));
+			while( br!=null && (line=br.readLine())!=null && !line.equals("") )  {
+				String response =line;
+				System.out.println(response);
 			}
-
+			br.close();
 			
-		};
-		return runnable;
+		}
 	}
-
 	
-	/**
-	 * @return
-	 */
-	private static Runnable getRunnableServer() {
-		Runnable runnable = new Runnable() {
-
-			
-
-			@Override
-			public void run() {
-				server = new Server();
-				server.startServer();
+	public static class C{
+		Socket cs;
+		public C() {
+			cs =null;
+		}
+		public void start() throws UnknownHostException, IOException {
+			cs= new Socket("localhost", 1234);
+			PrintWriter bw =new PrintWriter( cs.getOutputStream(),true);
+			bw.println("Solicitud desde: "+cs.getLocalAddress());
+			BufferedReader br = new BufferedReader(new InputStreamReader(cs.getInputStream()));
+			String line;
+			while( br!=null && (line=br.readLine())!=null && !line.equals("") )  {
+				String response =line;
+				System.out.println(response);
 			}
-		};
-
-		return runnable;
+			br.close();
+			
+			
+		}
 	}
-	
-	/**
-	 * @return
-	 */
-	protected static String getClientMessages() {
+	public static void main(String[] args) throws InterruptedException {
 		
-		
-		return "Mensaje de miguel";
+		Server server = new Server();
+		server.start();
+
 	}
 
 }
