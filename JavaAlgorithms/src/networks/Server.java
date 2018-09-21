@@ -71,6 +71,7 @@ public class Server {
 
 	private synchronized String computeInternal(String input, Connection conn) {
 		if (input.equalsIgnoreCase("create")) {
+			
 			return createGroup(conn);
 			
 		} else if (input.contains("cme:")) {

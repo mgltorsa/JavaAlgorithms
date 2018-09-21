@@ -87,7 +87,8 @@ public class Client {
 
 	public static void main(String[] args) {
 //		Client client = new Client("172.30.175.248",1234);
-		Client client = new Client("localhost", 1234);
+//		Client client = new Client("localhost",1234);
+		Client client = new Client("172.30.81.95", 1234);
 		client.start();
 	}
 }

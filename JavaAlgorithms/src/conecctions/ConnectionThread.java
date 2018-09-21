@@ -57,9 +57,8 @@ public class ConnectionThread implements Runnable {
 	}
 
 	private void computeQuery(String[] info,PrintWriter out, AtomicBoolean canBet) throws Exception {
-//		server.canBet(cash, canBet);
-		int port = server.getPort();
-		System.out.println("pass can be : "+port);
+		server.canBet(cash, canBet);
+		
 		if(!canBet.get()) {
 			return;
 		}		
