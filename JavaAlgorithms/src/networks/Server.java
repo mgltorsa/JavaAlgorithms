@@ -18,6 +18,7 @@ public class Server {
 	public Server() throws IOException {
 		this.port = 1234;
 		groups = new HashMap<>();
+		groups.put(0, new Chat(0));
 		connections = new ArrayList<>();
 		serverSocket=new ServerSocket(port);
 	}
@@ -30,7 +31,8 @@ public class Server {
 		while (true) {
 			try {
 				Socket socket = serverSocket.accept();
-				Connection conn = new Connection(this, socket, -1);
+				Connection conn = new Connection(this, socket, 0);
+				groups.get(0).addConnection(conn);
 				connections.add(conn);
 				conn.start();
 			} catch (IOException e) {
@@ -41,10 +43,16 @@ public class Server {
 	}
 
 	public String getWelcomeResponse(Connection conn) {
+		String code = "";
 		if(conn.getCode()==-1) {
 			return "No estas en ningun chat";
 		}
-		return "Conectado al chat: " + conn.getCode();
+		code=conn.code+"";
+
+		if(conn.code==0) {
+			code="general";
+		}
+		return "Bienvenido al chat: " + code;
 	}
 
 	public synchronized String compute(String input, Connection connection) {
@@ -54,6 +62,7 @@ public class Server {
 		}
 		if (input.equals("newwake")) {
 			response = getWelcomeResponse(connection);
+			
 		} else {
 			response = computeInternal(input, connection);
 		}
