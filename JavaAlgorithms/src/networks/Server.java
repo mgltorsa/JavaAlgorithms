@@ -71,24 +71,12 @@ public class Server {
 
 	private synchronized String computeInternal(String input, Connection conn) {
 		if (input.equalsIgnoreCase("create")) {
-			Chat chat = new Chat(group);
-			chat.addConnection(conn);
-			groups.put(group, chat);
-			return "Grupo creado con codigo: "+(group++);
+			return createGroup(conn);
+			
 		} else if (input.contains("cme:")) {
 			String[] info = input.trim().split("cme:");
 			int code = Integer.parseInt(info[1]);
-			int oldCode = conn.getCode();
-			if (oldCode != -1 && groups.get(oldCode) != null) {
-				groups.get(oldCode).removeConnection(conn);
-			}
-			if (groups.get(code) != null) {
-				conn.setCode(code);
-				groups.get(code).addConnection(conn);
-				return this.getWelcomeResponse(conn);
-			} else {
-				return "codigoInvalido";
-			}
+			return changeToGroup(code,conn);			
 		} else {
 			int code = conn.getCode();
 			Chat group = groups.get(code);
@@ -100,6 +88,28 @@ public class Server {
 		}
 
 		return "";
+	}
+
+	private String changeToGroup(int code, Connection conn) {
+		int oldCode = conn.getCode();
+		
+		if (oldCode != -1 && groups.get(oldCode) != null) {
+			groups.get(oldCode).removeConnection(conn);
+		}
+		if (groups.get(code) != null) {
+			conn.setCode(code);
+			groups.get(code).addConnection(conn);
+			return this.getWelcomeResponse(conn);
+		} else {
+			return "codigoInvalido";
+		}
+	}
+
+	private synchronized String createGroup(Connection conn) {
+		Chat chat = new Chat(group);
+		chat.addConnection(conn);
+		groups.put(group, chat);
+		return "Grupo creado con codigo: "+(group++);
 	}
 
 	public static void main(String[] args) throws IOException {
