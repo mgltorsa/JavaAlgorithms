@@ -4,22 +4,30 @@
 package conecctions;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Miguel
  *
  */
-public class Server extends Connection implements IServer {
+public class Server extends Source implements IServer {
 
-	private boolean isOnline = false;
+	private boolean isOnline = true;
 	private ServerSocket serverSocket;
 	private String response;
+	private int ones;
+	private int zeros;
+	private int sum = 2;
+	private int quantity = 1;
 
 	/**
 	 * @param type
@@ -29,7 +37,6 @@ public class Server extends Connection implements IServer {
 		super(Type.Server);
 		try {
 			serverSocket = new ServerSocket(getPort());
-			isOnline = false;
 		} catch (IOException e) {
 			System.out.println("From server constructor");
 			e.printStackTrace();
@@ -64,68 +71,18 @@ public class Server extends Connection implements IServer {
 	 * @see conecctions.IConnection#start()
 	 */
 	@Override
-	public synchronized boolean start() {
-		lock.lock();
-		boolean start = true;
-		try {
-			
-			isOnline=true;
-			Socket clientSocket = serverSocket.accept();
-//			while(true) {
-			PrintWriter bw = new PrintWriter(clientSocket.getOutputStream(),true);
-			while(bw==null) {
-				lock.newCondition().await();
-			}
-			setResponseMessage("Mensaje recibido desde: " + clientSocket.getLocalAddress());
+	public synchronized void start() {
 
-			bw.println(getResponseMessage());
-			BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			bw.println("Respuestas: ");
-			String line;
-			while (br != null && (line = br.readLine()) != null & !line.equals("")) {				
-				System.out.println(line);
-				String[] info = line.split(":");
-				bw.println(getResponse(info));
+		while (isOnline) {
+			try {
+				Socket connection = serverSocket.accept();
+				Thread thread = new Thread(new ConnectionThread(this, connection));
+				thread.start();
+			} catch (Exception e) {
+				e.printStackTrace();
+				isOnline = false;
 			}
-
-//			}
-			clientSocket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			start = false;
-		} catch (InterruptedException e) {
-			start=false;
-			e.printStackTrace();
 		}
-
-		return start;
-	}
-
-	/**
-	 * @param line
-	 * @return
-	 */
-	private String getResponse(String[] line) {
-		String response = "Invalid format";
-		try {
-			if (line[0].trim().toLowerCase().equals("suma")) {
-				String[] sum = line[1].trim().split(" ");
-				int a = Integer.parseInt(sum[0].trim());
-				int b = Integer.parseInt(sum[1].trim());
-				response = "La suma de " + a + " y " + b + " es: " + suma(a, b);
-			} else if (line[0].trim().toLowerCase().equals("resta")) {
-				String[] rest = line[1].trim().split(" ");
-				int a = Integer.parseInt(rest[0].trim());
-				int b = Integer.parseInt(rest[1].trim());
-				response = "La resta de " + a + " y " + b + " es: " + rest(a, b);
-				;
-			}
-		} catch (NumberFormatException e) {
-			response = "Verifique que los datos sean números";
-		} catch (Exception e) {
-			response = "A problem has occurred";
-		}
-		return response;
 	}
 
 	/**
@@ -158,6 +115,55 @@ public class Server extends Connection implements IServer {
 
 	public String getResponseMessage() {
 		return response;
+	}
+
+	public int bet(int q, int value) {
+
+		int res = value;
+
+		if (ones == 0 && zeros == 0) {
+			betTo(q);
+			return res;
+		}
+		if (q == 1) {
+			if (ones > zeros) {
+				ones--;
+				res = value;
+			} else {
+				ones++;
+				res = -value;
+			}
+
+		} else {
+			if (ones > zeros) {
+				res = -value;
+			} else {
+				zeros++;
+				res = value;
+			}
+		}
+		return res;
+
+	}
+
+	private void betTo(int q) {
+		if (q == 1) {
+			ones++;
+		} else {
+			zeros++;
+		}
+	}
+
+	public void canBet(int cash, AtomicBoolean canBet) {
+
+		boolean response = true;
+		if (cash < (sum/quantity)) {
+			
+			response = false;
+		}
+		sum += cash;
+		quantity++;
+		canBet.set(response);
 	}
 
 }

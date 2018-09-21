@@ -16,6 +16,6 @@ public interface IConnection {
 	public void setOutputStream(DataOutputStream stream);
 	public Type getConnectionType();
 	public boolean setPort(int port);
-    public boolean start();
+    public void start();
 	
 }
