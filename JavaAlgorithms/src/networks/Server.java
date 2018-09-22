@@ -50,7 +50,10 @@ public class Server {
 		code=conn.code+"";
 
 		if(conn.code==0) {
-			code="general";
+			code="general\n"
+					+"comandos:\n1. cme:codigo (código es el código del chat, este comando se usa para cambiar de chat '/' El chat general es codigo 0)\n"
+					+ "2. create (este comando es usado para crear un chat, al crearlo se le asignara un código)\n"
+					+ "3. Escriba normal para conversar.";
 		}
 		return "Bienvenido al chat: " + code;
 	}
@@ -102,7 +105,7 @@ public class Server {
 			groups.get(code).addConnection(conn);
 			return this.getWelcomeResponse(conn);
 		} else {
-			return "codigoInvalido";
+			return "no existe un chat con este codigo";
 		}
 	}
 

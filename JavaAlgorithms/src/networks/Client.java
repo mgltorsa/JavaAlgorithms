@@ -68,10 +68,10 @@ public class Client {
 						}
 						String input = "";
 						while (in.ready()) {
-							input += in.readLine();
+							System.out.println(in.readLine());
 						}
 
-						System.out.println(input);
+//						System.out.println(input);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
