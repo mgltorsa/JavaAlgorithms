@@ -6,83 +6,72 @@ package conecctions;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * @author Miguel
  *
  */
-public class Client extends Source implements IClient {
+public class Client implements IListener {
+	public static final String TRUSTTORE_LOCATION = "C:/Program Files (x86)/Java/jre1.8.0_181/bin/keystore.jks";
 
+	private int port;
 	private String host;
 	private Socket socket;
-	private String message;
+	private IListener listener;
+	boolean ssl;
 
-	/**
-	 * @param type
-	 */
 	public Client() {
-		super(Type.Client);
-		socket = new Socket();
-		host = "localhost";
+		this(1234, "localhost", false);
+	}
+	
+	public Client(String host) {
+		this(1234,host);
+	}
+	
+	public Client(boolean sslActivated) {
+		this(1234,sslActivated);
+	}
+	
+	public Client(int port, String host) {
+		this(port,host,false);
+	}
+	public Client(int port, boolean sslActivated) {
+		this(port,"localhost",sslActivated);
+	}
+	
+	public Client(String host, boolean sslActivated) {
+		this(1234,host,sslActivated);
 	}
 
-	public Client(Type type, String host) {
-		super(type);
-		socket = new Socket();
-		setRequestMessage("Suma:5 7\nSuma:3 4");
+	public Client(int port, String host, boolean sslActivated) {
+		System.setProperty("javax.net.ssl.trustStore", TRUSTTORE_LOCATION);
+		this.port = port;
+		this.ssl = sslActivated;
 		this.host = host;
 	}
 
-	public Client(Type type, int port) {
-		super(type);
-		host = "localhost";
-		setPort(port);
-
+	public void setPort(int port) {
+		this.port = port;
 	}
 
-	public Client(Type type, String host, int port) {
-		super(type);
-		socket = new Socket();
+	public void setHost(String host) {
 		this.host = host;
-		setPort(port);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see conecctions.IConnection#start()
-	 */
-	@Override
-	public synchronized void start() {
+	public void setSSLSecurity(boolean sslActivated) {
+		this.ssl = sslActivated;
+	}
+
+	public void start() {
 		try {
-			socket = new Socket(getHost(), getPort());
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-			PrintWriter bw = new PrintWriter(socket.getOutputStream(), true);
-
-			String lineIn = null;
-			while (true) {
-
-				while (!br.ready()) {					
-					Thread.sleep(300);
-				}
-				while (br.ready()) {
-					System.out.println(br.readLine());
-				}
-
-				System.out.println("Empiece a escribir papa");
-				lineIn = in.readLine();
-				if (lineIn.equals("x")) {
-					break;
-				}
-				bw.println(lineIn);
-			}
-			socket.close();
-
+			openSocket();
+			this.listener = new Connection(socket, this);
+			((Thread) listener).start();
+			initInputClient();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -90,31 +79,58 @@ public class Client extends Source implements IClient {
 
 	}
 
-	public void setRequestMessage(String message) {
-		this.message = message;
-	}
-
 	/**
 	 * @return
+	 * @throws IOException 
+	 * @throws UnknownHostException 
 	 */
-	public String getHost() {
-		return host;
+	private void openSocket() throws UnknownHostException, IOException {
+		if(ssl) {
+			SSLSocketFactory sf = (SSLSocketFactory) SSLSocketFactory.getDefault();
+			socket = sf.createSocket(host, port);
+		}else {
+			socket = new Socket(host, port);
+		}
 	}
 
 	/**
-	 * @return the socket
+	 * @throws IOException
+	 * 
 	 */
-	public Socket getSocket() {
-		return socket;
+	private void initInputClient() throws IOException {
+		BufferedReader inClient = new BufferedReader(
+				new InputStreamReader(System.in));
+		while (true) {
+			onSendMessageData(inClient.readLine());
+		}
 	}
 
-	public String getRequestMessage() {
-		return message;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see conecctions.IListener#onMessageData(java.lang.String,
+	 * conecctions.IListener)
+	 */
+	@Override
+	public void onSendMessageData(String message) {
+		listener.onSendMessageData(message);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see conecctions.IListener#onInputMessageData(java.lang.String,
+	 * conecctions.IListener)
+	 */
+	@Override
+	public void onInputMessageData(String message) {
+		System.out.println("recibido en cliente: " + message);
+
 	}
 
 	public static void main(String[] args) {
 		Client client = new Client();
-		
 		client.start();
 	}
 }

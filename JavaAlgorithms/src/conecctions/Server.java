@@ -3,167 +3,121 @@
  */
 package conecctions;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.ArrayList;
+
+import javax.net.ssl.SSLServerSocketFactory;
 
 /**
  * @author Miguel
  *
  */
-public class Server extends Source implements IServer {
+public class Server implements IListener {
 
-	private boolean isOnline = true;
+	public static final String KEYSTORE_LOCATION = "C:/Program Files (x86)/Java/jre1.8.0_181/bin/keystore.jks";
+	public static final String KEYSTORE_PASSWORD = "123456";
+
+	private int port;
+	private boolean ssl;
 	private ServerSocket serverSocket;
-	private String response;
-	private int ones;
-	private int zeros;
-	private int sum = 2;
-	private int quantity = 1;
+	private ArrayList<IListener> connections;
 
-	/**
-	 * @param type
-	 */
+	public Server(int port, boolean sslActivated) {
+		System.setProperty("javax.net.ssl.keyStore", KEYSTORE_LOCATION);
+		System.setProperty("javax.net.ssl.keyStorePassword", KEYSTORE_PASSWORD);
+		this.port = port;
+		ssl = sslActivated;
+		connections = new ArrayList<>();
+	}
+	
+
+	public Server(int port) {
+		this(port, false);
+	}
+
+	public Server(boolean sslActivated) {
+		this(1234,sslActivated);
+	}
+	
 	public Server() {
+		this(1234, false);
+	}
 
-		super(Type.Server);
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public void setSSL(boolean sslActivated) {
+		this.ssl = sslActivated;
+	}
+	public void start() {
 		try {
-			serverSocket = new ServerSocket(getPort());
+			if (serverSocket == null) {
+				openServerSocket();
+			}
+			while (true) {
+				Socket socket = serverSocket.accept();
+				Connection connection = new Connection(socket, this);
+				connections.add(connection);
+				connection.start();
+			}
+
 		} catch (IOException e) {
-			System.out.println("From server constructor");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
 
 	/**
-	 * @return
+	 * @throws IOException
+	 * 
 	 */
-	public boolean isOnline() {
-		return isOnline;
-	}
+	private void openServerSocket() throws IOException {
 
-	public ServerSocket getSocket() {
-		return serverSocket;
+		if (ssl) {
+			SSLServerSocketFactory ssf = (SSLServerSocketFactory) SSLServerSocketFactory
+					.getDefault();
+			serverSocket = ssf.createServerSocket(port);
+
+		} else {
+			serverSocket = new ServerSocket(port);
+		}
+
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see conecctions.IConnection#getOutputStream()
+	 * @see conecctions.IListener#onMessageData(java.lang.String,
+	 * conecctions.IListener)
 	 */
 	@Override
-	public DataOutputStream getOutputStream() {
-		return super.getOutputStream();
-	}
+	public void onSendMessageData(String message) {
+		connections.forEach(x -> x.onSendMessageData(message));
 
-	/*
-	 * (non-Javadoc) *
-	 * 
-	 * @see conecctions.IConnection#start()
-	 */
-	@Override
-	public synchronized void start() {
-
-		while (isOnline) {
-			try {
-				Socket connection = serverSocket.accept();
-				Thread thread = new Thread(new ConnectionThread(this, connection));
-				thread.start();
-			} catch (Exception e) {
-				e.printStackTrace();
-				isOnline = false;
-			}
-		}
-	}
-
-	/**
-	 * @param a
-	 * @param b
-	 * @return
-	 */
-	private int rest(int a, int b) {
-		return a - b;
-	}
-
-	/**
-	 * @param a
-	 * @param b
-	 * @return
-	 */
-	private int suma(int a, int b) {
-		return a + b;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see conecctions.IServer#setResponseMessage(java.lang.String)
+	 * @see conecctions.IListener#onInputMessageData(java.lang.String,
+	 * conecctions.IListener)
 	 */
 	@Override
-	public void setResponseMessage(String message) {
-		this.response = message;
-	}
-
-	public String getResponseMessage() {
-		return response;
-	}
-
-	public int bet(int q, int value) {
-
-		int res = value;
-
-		if (ones == 0 && zeros == 0) {
-			betTo(q);
-			return res;
+	public void onInputMessageData(String message) {
+		if (message.equals("newinstance")) {
+			onSendMessageData("Welcome to the jungle");
 		}
-		if (q == 1) {
-			if (ones > zeros) {
-				ones--;
-				res = value;
-			} else {
-				ones++;
-				res = -value;
-			}
-
-		} else {
-			if (ones > zeros) {
-				res = -value;
-			} else {
-				zeros++;
-				res = value;
-			}
-		}
-		return res;
+		
+		System.out.println("recibido en servidor"+message);
 
 	}
 
-	private void betTo(int q) {
-		if (q == 1) {
-			ones++;
-		} else {
-			zeros++;
-		}
+	public static void main(String[] args) {
+		Server server = new Server();
+		server.start();
 	}
-
-	public void canBet(int cash, AtomicBoolean canBet) {
-
-		boolean response = true;
-		if (cash < (sum/quantity)) {
-			
-			response = false;
-		}
-		sum += cash;
-		quantity++;
-		canBet.set(response);
-	}
-
 }
