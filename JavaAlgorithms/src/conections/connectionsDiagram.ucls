@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.2.2" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="conecctions.Conection" project="JavaAlgorithms" 
-    file="/JavaAlgorithms/src/conecctions/Conection.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="conections.Conection" project="JavaAlgorithms" 
+    file="/JavaAlgorithms/src/conections/Conection.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="151" y="461"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -10,8 +10,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="conecctions.Server" project="JavaAlgorithms" 
-    file="/JavaAlgorithms/src/conecctions/Server.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="conections.Server" project="JavaAlgorithms" 
+    file="/JavaAlgorithms/src/conections/Server.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="972" y="193"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -19,8 +19,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="conecctions.ReaderThread" project="JavaAlgorithms" 
-    file="/JavaAlgorithms/src/conecctions/ReaderThread.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="conections.ReaderThread" project="JavaAlgorithms" 
+    file="/JavaAlgorithms/src/conections/ReaderThread.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="160" y="185"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -28,8 +28,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <interface id="4" language="java" name="conecctions.IListener" project="JavaAlgorithms" 
-    file="/JavaAlgorithms/src/conecctions/IListener.java" binary="false" corner="BOTTOM_RIGHT">    
+  <interface id="4" language="java" name="conections.IListener" project="JavaAlgorithms" 
+    file="/JavaAlgorithms/src/conections/IListener.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="99" width="188" x="428" y="426"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -37,8 +37,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="5" language="java" name="conecctions.Client" project="JavaAlgorithms" 
-    file="/JavaAlgorithms/src/conecctions/Client.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="5" language="java" name="conections.Client" project="JavaAlgorithms" 
+    file="/JavaAlgorithms/src/conections/Client.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1304" y="620"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      

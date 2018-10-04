@@ -1,4 +1,4 @@
-package conecctions;
+package conections;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -88,18 +88,22 @@ public class Conection extends Thread implements IListener {
 		return socket;
 	}
 
+	
 	public void initDownload() {
-		this.readThread.setDownloadMode(true);
 		try {
+		    	readThread.setTransferMode(true);
+
 			Transfer transfer = new Transfer(socket);
 
 			transfer.download();
+		    	readThread.setTransferMode(false);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		this.readThread.setDownloadMode(false);
+		this.readThread.setTransferMode(false);
 	}
 
 	/**
@@ -108,10 +112,10 @@ public class Conection extends Thread implements IListener {
 	public void initTransfer(String fileName) {
 		Transfer transfer;
 		try {
-			readThread.setDownloadMode(true);
+		    	readThread.setTransferMode(true);
 			transfer = new Transfer(socket);
 			transfer.transfer(fileName);
-			readThread.setDownloadMode(false);
+		    	readThread.setTransferMode(false);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -119,4 +123,7 @@ public class Conection extends Thread implements IListener {
 		}
 		
 	}
+
+
+	
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package conecctions;
+package conections;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
