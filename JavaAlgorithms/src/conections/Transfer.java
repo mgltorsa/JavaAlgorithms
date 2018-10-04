@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
@@ -49,31 +50,66 @@ public class Transfer {
 	}
 	out.writeUTF("accepted");
 	String fileName = in.readUTF();
-	File file = new File(directory + "fromServer " + fileName);
-	if (!file.exists()) {
-	    file.createNewFile();
-	}
-	if (type.equals("image")) {	    
-	    BufferedImage image = ImageIO.read(socket.getInputStream());
+	
+	File file = createFile(directory,fileName);
+	if (type.equals("image")) {
+	    BufferedImage image = getImage(socket.getInputStream());
 	    ImageIO.write(image, "png", file);
 	} else {
-	    BufferedOutputStream outputFile = new BufferedOutputStream(new FileOutputStream(file));
-	    DataInputStream inputFile = new DataInputStream(socket.getInputStream());
-	    byte[] receivedData = new byte[(int) sizeFile];
-	    int inByte = 0;
-	    inByte = inputFile.read(receivedData,0,(int) sizeFile);
-	    outputFile.write(receivedData, 0, inByte);
-	    outputFile.flush();
 
-	    outputFile.close();
+	    downloadFile((int) sizeFile,file);
+
 	}
 	socket.getOutputStream().flush();
-	
-	System.out.println("finalizo descarga de: "+fileName);
+
+	System.out.println("finalizo descarga de: " + fileName);
 
     }
 
-   
+    /**
+     * @param directory
+     * @param fileName
+     * @return
+     * @throws IOException 
+     */
+    private File createFile(String directory, String fileName) throws IOException {
+	File file = new File(
+		directory + "from-" + socket.getInetAddress().getHostAddress().replace(".", "-") + " " + fileName);
+	if (!file.exists()) {
+
+	    file.createNewFile();
+	}
+	return file;
+    }
+
+    /**
+     * @throws Exception 
+     * 
+     */
+    private void downloadFile(int sizeFile, File file) throws Exception {
+	BufferedOutputStream outputFile = new BufferedOutputStream(new FileOutputStream(file));
+	DataInputStream inputFile = new DataInputStream(socket.getInputStream());
+	byte[] receivedData = new byte[(int) sizeFile];
+	int inByte = 0;
+	inByte = inputFile.read(receivedData, 0, (int) sizeFile);
+	outputFile.write(receivedData, 0, inByte);
+	outputFile.flush();
+
+	outputFile.close();
+
+    }
+
+    /**
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    private BufferedImage getImage(InputStream inputStream) throws IOException {
+	BufferedImage image = ImageIO.read(inputStream);
+
+	return image;
+    }
+
     private BufferedImage getImage(File file) {
 	BufferedImage img = null;
 	try {
@@ -91,29 +127,57 @@ public class Transfer {
 	if (image != null) {
 	    otherInfo = "image";
 	}
-	DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-	out.writeUTF("downloading:" + file.length() + ":" + otherInfo);
-	DataInputStream inputResponse = new DataInputStream(socket.getInputStream());
-	out.writeUTF(fileName);
 
-	String res = inputResponse.readUTF();
+	writeTransferInfo(fileName, file, otherInfo);
+	String response = waitResponseTransfer();
+
 	if (image == null) {
-	    if (res.equals("accepted")) {
-		BufferedInputStream fileInput = new BufferedInputStream(new FileInputStream(file));
-		BufferedOutputStream fileOutput = new BufferedOutputStream(socket.getOutputStream());
-
-		byte[] data = new byte[(int) file.length()];
-		for (int in = fileInput.read(data); in != -1; in = fileInput.read(data)) {
-		    fileOutput.write(data, 0, in);
-		}
-		fileOutput.flush();
-		fileInput.close();
+	    if (response.equals("accepted")) {
+		transferFile(file);
 	    }
 	} else {
 	    ImageIO.write(image, "png", socket.getOutputStream());
 	}
 	socket.getOutputStream().flush();
-	System.out.println("Finalizo transferencia a: "+socket.getInetAddress().getHostAddress());
+	System.out.println("Finalizo transferencia a: " + socket.getInetAddress().getHostAddress());
+    }
+
+    /**
+     * @return
+     * @throws IOException
+     */
+    private String waitResponseTransfer() throws IOException {
+	DataInputStream inputResponse = new DataInputStream(socket.getInputStream());
+	return inputResponse.readUTF();
+    }
+
+    /**
+     * @param file
+     * @param otherInfo
+     * @throws IOException
+     */
+    private void writeTransferInfo(String fileName, File file, String otherInfo) throws IOException {
+	DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+	out.writeUTF("transfering:" + file.length() + ":" + otherInfo);
+	out.writeUTF(fileName);
+
+    }
+
+    /**
+     * @param file
+     * @throws IOException
+     */
+    private void transferFile(File file) throws IOException {
+	BufferedInputStream fileInput = new BufferedInputStream(new FileInputStream(file));
+	BufferedOutputStream fileOutput = new BufferedOutputStream(socket.getOutputStream());
+
+	byte[] data = new byte[(int) file.length()];
+	for (int in = fileInput.read(data); in != -1; in = fileInput.read(data)) {
+	    fileOutput.write(data, 0, in);
+	}
+	fileOutput.flush();
+	fileInput.close();
+
     }
 
     /**

@@ -159,11 +159,25 @@ public class Server implements IListener {
 		    onSendMessageData(conectionId + "/404 Not Found");
 		}
 
+	    }else if(infoQuery[0].toLowerCase().equals("upload")){
+		System.out.println("received upload");
+		onSendMessageData(conectionId+"/preparefortransfer");
+		initializeDownload(conectionId);
+
 	    }
 	} else {
 	    onSendMessageData(conectionId + "/400 Bad Request");
 	}
 
+    }
+
+    /**
+     * 
+     */
+    private void initializeDownload(String conectionId) {
+	Conection conection = (Conection) conections.get(conectionId);
+	conection.initDownload();
+	
     }
 
     /**

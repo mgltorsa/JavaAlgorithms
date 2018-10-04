@@ -92,18 +92,15 @@ public class Conection extends Thread implements IListener {
 	public void initDownload() {
 		try {
 		    	readThread.setTransferMode(true);
-
 			Transfer transfer = new Transfer(socket);
-
 			transfer.download();
 		    	readThread.setTransferMode(false);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		    	readThread.setTransferMode(false);
 			e.printStackTrace();
 		}
 		
-		this.readThread.setTransferMode(false);
 	}
 
 	/**
@@ -118,7 +115,7 @@ public class Conection extends Thread implements IListener {
 		    	readThread.setTransferMode(false);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		    	readThread.setTransferMode(false);
 			e.printStackTrace();
 		}
 		

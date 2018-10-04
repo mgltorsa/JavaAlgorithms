@@ -90,8 +90,9 @@ public class ReaderThread extends Thread implements IListener {
 
     /**
      * @param b
+     * @return 
      */
-    public void setTransferMode(boolean b) {
+    public synchronized void setTransferMode(boolean b) {
 	clearInputStream();
 	
 	this.download = b;
@@ -103,6 +104,9 @@ public class ReaderThread extends Thread implements IListener {
      */
     private void clearInputStream() {
 	try {
+	    if(!in.ready()) {
+		return;
+	    }
 	    while (in.ready()) {
 	        in.readLine();
 	    }
