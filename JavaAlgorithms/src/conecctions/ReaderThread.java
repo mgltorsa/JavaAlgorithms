@@ -17,6 +17,7 @@ public class ReaderThread extends Thread implements IListener {
 	private Socket socket;
 	private IListener listener;
 	private BufferedReader in;
+	private boolean download;
 	/**
 	 * 
 	 */
@@ -43,14 +44,13 @@ public class ReaderThread extends Thread implements IListener {
 	public void start() {
 		while (!socket.isClosed()) {
 			try {
-				while (!in.ready()) {
-					Thread.sleep(500);
+				String input = null;
+				if (!download) {
+					while (((input = in.readLine()) != null)) {
+						onInputMessageData(input);
+					}
 				}
-				String input = "";
-				while (in.ready()) {
-					input += in.readLine();
-				}
-				onInputMessageData(input);
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -65,7 +65,7 @@ public class ReaderThread extends Thread implements IListener {
 	 */
 	@Override
 	public void onInputMessageData(String message) {
-		
+
 		listener.onInputMessageData(message);
 
 	}
@@ -81,6 +81,13 @@ public class ReaderThread extends Thread implements IListener {
 		if (message.equals("revalidate")) {
 			openInputStream();
 		}
+	}
+	/**
+	 * @param b
+	 */
+	public void setDownloadMode(boolean b) {
+		this.download=b;
+		
 	}
 
 }

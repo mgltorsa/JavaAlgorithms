@@ -7,24 +7,17 @@ import java.io.*;
 public class Permutations {
 	
 	public static void main(String[] args)throws Exception {
-		String m = "abcd";
+		String m = "BES";
 		char[] c = m.toCharArray();
 		int count=1;
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		long fact =1;
-		for (int i = 1; i <= 10; i++) {
-			fact*=i;
-		}
-		fact*=9;
-		
-		bw.write(fact+"");
-		bw.newLine();
+	
 		do {
-//			for(char k : c) {
-//				bw.write(k+" ");
-//			}
-//			bw.write((count++)+"");
-//			bw.newLine();
+			for(char k : c) {
+				bw.write(k+" ");
+			}
+			bw.write((count++)+"");
+			bw.newLine();
 		}while(nextPermutation(c));
 		bw.write("termine");
 		bw.close();

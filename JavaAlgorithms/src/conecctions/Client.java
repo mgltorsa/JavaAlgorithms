@@ -16,7 +16,7 @@ import javax.net.ssl.SSLSocketFactory;
  *
  */
 public class Client implements IListener {
-	public static final String TRUSTTORE_LOCATION = "C:/Program Files (x86)/Java/jre1.8.0_181/bin/keystore.jks";
+	public static final String TRUSTTORE_LOCATION = "C:/Users/Asus/Desktop/Desktop/clientTrusted.jks";
 
 	private int port;
 	private String host;
@@ -54,6 +54,13 @@ public class Client implements IListener {
 		this.host = host;
 	}
 
+	/**
+	 * @param i
+	 */
+	public Client(int port) {
+		this(port,"localhost");
+	}
+
 	public void setPort(int port) {
 		this.port = port;
 	}
@@ -69,7 +76,7 @@ public class Client implements IListener {
 	public void start() {
 		try {
 			openSocket();
-			this.listener = new Connection(socket, this);
+			this.listener = new Conection(socket, this);
 			((Thread) listener).start();
 			initInputClient();
 		} catch (Exception e) {
@@ -126,11 +133,21 @@ public class Client implements IListener {
 	@Override
 	public void onInputMessageData(String message) {
 		System.out.println("recibido en cliente: " + message);
+		if(message.equals("200 OK")) {
+			Conection conection = (Conection) listener;
+			try {
+				conection.initDownload();
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	}
 
 	public static void main(String[] args) {
-		Client client = new Client();
+		Client client = new Client(8000,false);
 		client.start();
 	}
 }
