@@ -51,6 +51,7 @@ public class ReaderThread extends Thread implements IListener {
 			onInputMessageData(input);
 		    }
 		}
+		in.wait();
 
 	    } catch (Exception e) {
 		try {
@@ -90,11 +91,15 @@ public class ReaderThread extends Thread implements IListener {
 
     /**
      * @param b
-     * @return 
+     * @return
      */
     public synchronized void setTransferMode(boolean b) {
-	clearInputStream();
-	
+//	clearInputStream();
+	if (!b) {
+	    clearInputStream();
+	    notifyAll();
+	}
+
 	this.download = b;
 
     }
@@ -104,15 +109,20 @@ public class ReaderThread extends Thread implements IListener {
      */
     private void clearInputStream() {
 	try {
-	    if(!in.ready()) {
-		return;
-	    }
-	    while (in.ready()) {
-	        in.readLine();
-	    }
-	} catch (IOException e) {
+	    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+	} catch (Exception e) {
 	}
-	
+
+    }
+
+    
+
+    /**
+     * @return
+     */
+    public boolean isDownloadMode() {
+	return download;
     }
 
 }

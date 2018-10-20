@@ -110,9 +110,28 @@ public class Client implements IListener {
      */
     private void initInputClient() throws IOException {
 	BufferedReader inClient = new BufferedReader(new InputStreamReader(System.in));
-	while (true) {
-	    onSendMessageData(inClient.readLine());
-	}
+	Thread t = new Thread(new Runnable() {
+	    
+	    @Override
+	    public void run() {
+		while (true) {
+		    String s;
+		    try {
+			s = inClient.readLine();
+			 if (!s.isEmpty()) {
+				onSendMessageData(s);
+			    }
+		    } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		    }
+		   
+		}
+		
+	    }
+	});
+	t.start();
+	
     }
 
     /*
@@ -128,7 +147,7 @@ public class Client implements IListener {
 	if (info[0].equals("upload")) {
 	    uploadFiles.add(info[1]);
 	}
-	
+
 	listener.onSendMessageData(toServer);
 
     }
@@ -140,7 +159,7 @@ public class Client implements IListener {
 	try {
 	    Conection conection = (Conection) (listener);
 	    conection.initTransfer(fileName);
-	    
+
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -157,7 +176,7 @@ public class Client implements IListener {
     @Override
     public void onInputMessageData(String message) {
 	System.out.println("recibido en cliente: " + message);
-	if (message.equals("200 OK")) {
+	if (message.contains("200 OK")) {
 	    Conection conection = (Conection) listener;
 	    try {
 		conection.initDownload();
@@ -167,9 +186,9 @@ public class Client implements IListener {
 		e.printStackTrace();
 	    }
 	}
-	if(message.equals("preparefortransfer")) {
+	if (message.equals("preparefortransfer")) {
 	    uploadToServer(uploadFiles.poll());
-	    
+
 	}
 
     }

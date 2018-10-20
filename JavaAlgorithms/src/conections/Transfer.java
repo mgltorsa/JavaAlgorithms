@@ -13,9 +13,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+
 
 /**
  * @author Miguel
@@ -50,14 +54,14 @@ public class Transfer {
 	}
 	out.writeUTF("accepted");
 	String fileName = in.readUTF();
-	
-	File file = createFile(directory,fileName);
+
 	if (type.equals("image")) {
 	    BufferedImage image = getImage(socket.getInputStream());
-	    ImageIO.write(image, "png", file);
+	    ImageIO.write(image, "png", createFile(directory,fileName));
 	} else {
 
-	    downloadFile((int) sizeFile,file);
+	    File file = createFile(directory,fileName);
+	    downloadFile((int) sizeFile, file);
 
 	}
 	socket.getOutputStream().flush();
@@ -70,20 +74,50 @@ public class Transfer {
      * @param directory
      * @param fileName
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private File createFile(String directory, String fileName) throws IOException {
-	File file = new File(
-		directory + "from-" + socket.getInetAddress().getHostAddress().replace(".", "-") + " " + fileName);
-	if (!file.exists()) {
-
+	String infoFile[] = specialSplit(fileName, '.');
+	String suffix = infoFile[1];
+	String prefix = directory + "from-" + socket.getInetAddress().getHostAddress().replace(".", "-") + " "
+		+ infoFile[0];
+	File file = new File(prefix+"."+suffix);
+	if(!file.exists()) {
 	    file.createNewFile();
 	}
+
 	return file;
     }
 
     /**
-     * @throws Exception 
+     * @param fileName
+     * @param string
+     * @return
+     */
+    private String[] specialSplit(String fileName, char regex) {
+	ArrayList<String> matchs = new ArrayList<>();
+	String currentMatch = "";
+	for (int i = 0; i < fileName.length(); i++) {
+	    char c = fileName.charAt(i);
+	    if (c == regex) {
+		if (!currentMatch.isEmpty()) {
+		    matchs.add(currentMatch);
+		}
+		currentMatch="";
+	    } else {
+		currentMatch += c;
+	    }
+	}
+	if (!currentMatch.isEmpty()) {
+	    matchs.add(currentMatch);
+	}
+	String[] split = new String[matchs.size()];
+	matchs.toArray(split);
+	return split;
+    }
+
+    /**
+     * @throws Exception
      * 
      */
     private void downloadFile(int sizeFile, File file) throws Exception {
@@ -91,7 +125,9 @@ public class Transfer {
 	DataInputStream inputFile = new DataInputStream(socket.getInputStream());
 	byte[] receivedData = new byte[(int) sizeFile];
 	int inByte = 0;
-	inByte = inputFile.read(receivedData, 0, (int) sizeFile);
+	
+
+	inByte = inputFile.read(receivedData);
 	outputFile.write(receivedData, 0, inByte);
 	outputFile.flush();
 
@@ -124,22 +160,28 @@ public class Transfer {
 	File file = new File(root + fileName);
 	BufferedImage image = getImage(file);
 	String otherInfo = "";
-	if (image != null) {
-	    otherInfo = "image";
-	}
-
-	writeTransferInfo(fileName, file, otherInfo);
-	String response = waitResponseTransfer();
-
-	if (image == null) {
-	    if (response.equals("accepted")) {
-		transferFile(file);
+	try {
+	    if (image != null) {
+		otherInfo = "image";
 	    }
-	} else {
-	    ImageIO.write(image, "png", socket.getOutputStream());
+
+	    writeTransferInfo(fileName, file, otherInfo);
+	    String response = waitResponseTransfer();
+
+	    if (response.equals("accepted")) {
+		if (image == null) {
+		    transferFile(file);
+
+		} else {
+		    ImageIO.write(image, "png", socket.getOutputStream());
+		}
+	    }
+	    socket.getOutputStream().flush();
+	    System.out.println("Finalizo transferencia a: " + socket.getInetAddress().getHostAddress());
+
+	} catch (SocketException e) {
+	    System.out.println("Se cerró la conexion con " + socket.getInetAddress().getHostAddress());
 	}
-	socket.getOutputStream().flush();
-	System.out.println("Finalizo transferencia a: " + socket.getInetAddress().getHostAddress());
     }
 
     /**
