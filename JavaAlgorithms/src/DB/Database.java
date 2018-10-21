@@ -11,6 +11,9 @@ public class Database {
 
     public static String JDBC_DRIVER = "jdbc:derby:database;create=true";
 
+    //SE CAMBIARON TODAS LAS CLASES (MIRAR COMENTARIOS) Y EL METODO INSERT INTO
+    
+    
     public static void main(String[] args) {
 
 	DBField nameField = new DBField("nombre", SQLTypes.VARCHAR, "30");
@@ -40,6 +43,10 @@ public class Database {
 	System.out.println("Ingrese en el siguiente formato: nombre:id:edad");
 	for (String line = sc.nextLine(); line != null && !line.toLowerCase().equals("STOP"); line = sc.nextLine()) {
 
+	    //PUSE ESTA LINEA POR SI LAS MOSCAS
+	    if(line.toLowerCase().equals("STOP")) {
+		break;
+	    }
 	    String[] info = line.split(":");
 	    try {
 		InsertIn("ESTUDIANTES", info[0], info[1], info[2]);
@@ -103,6 +110,7 @@ public class Database {
 	Statement statement = conn.createStatement();
 	String insertSql = "INSERT INTO " + dbName + " VALUES (";
 	for (int i = 0; i < values.length - 1; i++) {
+	    //AGREGUÉ LAS COMILLAS SIMPLES PARA INSERTAR EN LA TABLA
 	    insertSql += "'"+values[i]+"'" + ",";
 	}
 

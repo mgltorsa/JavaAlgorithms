@@ -19,6 +19,7 @@ public enum SQLTypes {
 	this.info = info;
     }
 
+    //AÑADÍ ESTE METODO NUEVO
     public String getStringFormat() {
 	String top = toString();
 	if (info != null) {
