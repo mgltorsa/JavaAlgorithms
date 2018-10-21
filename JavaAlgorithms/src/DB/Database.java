@@ -17,10 +17,10 @@ public class Database {
 	DBField idField = new DBField("id", SQLTypes.VARCHAR, "30");
 	DBField edadField = new DBField("edad", SQLTypes.NUMBER, "2");
 	try {
-	    // CREAR UNA BASE DE DATOS LLAMA ESTUDIANTES CON LOS CAMPOS NOMBRE, ID, Y EDAD.
-	    createDatabase("ESTUDIANTES", nameField, idField, edadField);
+	    // CREAR UNA TABLA LLAMADA ESTUDIANTES CON LOS CAMPOS NOMBRE, ID, Y EDAD.
+	    createTable("ESTUDIANTES", nameField, idField, edadField);
 	} catch (SQLException e) {
-	    System.out.println("La base de datos estudiante no pudó ser creada, verifique que no exista");
+	    System.out.println("La tabla estudiante no pudó ser creada, verifique que no exista");
 	}
 
 	try {
@@ -111,7 +111,7 @@ public class Database {
 
     }
 
-    private static void createDatabase(String dbName, DBField... fields) throws SQLException {
+    private static void createTable(String dbName, DBField... fields) throws SQLException {
 
 	Connection conn = getConnectionToDB();
 	Statement statement = conn.createStatement();
