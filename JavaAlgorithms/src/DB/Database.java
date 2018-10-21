@@ -15,7 +15,7 @@ public class Database {
 
 	DBField nameField = new DBField("nombre", SQLTypes.VARCHAR, "30");
 	DBField idField = new DBField("id", SQLTypes.VARCHAR, "30");
-	DBField edadField = new DBField("edad", SQLTypes.NUMBER, "2");
+	DBField edadField = new DBField("edad", SQLTypes.INTEGER, null);
 	try {
 	    // CREAR UNA TABLA LLAMADA ESTUDIANTES CON LOS CAMPOS NOMBRE, ID, Y EDAD.
 	    createTable("ESTUDIANTES", nameField, idField, edadField);
@@ -30,6 +30,7 @@ public class Database {
 	    InsertIn("ESTUDIANTES", "Juan", "123", "19");
 
 	} catch (SQLException e) {
+	    e.printStackTrace();
 	    System.out.println("No se logró añadir al estudiante");
 	}
 
@@ -42,7 +43,7 @@ public class Database {
 	    String[] info = line.split(":");
 	    try {
 		InsertIn("ESTUDIANTES", info[0], info[1], info[2]);
-
+		System.out.println("Se agregó el estudiante");
 	    } catch (Exception e) {
 		System.out.println("No se logró añadir al estudiante " + info[0]);
 	    }
@@ -102,7 +103,7 @@ public class Database {
 	Statement statement = conn.createStatement();
 	String insertSql = "INSERT INTO " + dbName + " VALUES (";
 	for (int i = 0; i < values.length - 1; i++) {
-	    insertSql += values[i] + ",";
+	    insertSql += "'"+values[i]+"'" + ",";
 	}
 
 	insertSql += values[values.length - 1] + ")";
@@ -115,12 +116,13 @@ public class Database {
 
 	Connection conn = getConnectionToDB();
 	Statement statement = conn.createStatement();
-	String createSql = "CREATE TABLE " + dbName + "(";
+	String createSql = "CREATE TABLE " + dbName + " ( ";
 	for (int i = 0; i < fields.length - 1; i++) {
-	    createSql += fields[i].toString() + ",";
+	    createSql += fields[i].toString() + ", ";
 	}
 
-	createSql += fields[fields.length - 1].toString() + ")";
+	createSql += fields[fields.length - 1].toString() + " )";
+	
 
 	statement.execute(createSql);
 
