@@ -2,8 +2,13 @@ package DB;
 
 public enum SQLTypes {
 
+    //VARCHAR ES EL TIPO SQL PARA CADENAS O STRINGS
     VARCHAR,
+    
+    //NUMBER ES EL TIPO SQL PARA NUMEROS
     NUMBER,
+    
+    //DATE ES EL TIPO SQL PARA FECHAS.
     DATE;
     
     
