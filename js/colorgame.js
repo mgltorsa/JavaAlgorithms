@@ -2,6 +2,7 @@
 	var squares;
 	var wonGame=false;
 	var time;
+	var timerID;
 
 	function colors(){
 
@@ -12,19 +13,35 @@
 		pickedColor = getPickedColor(colors);		
 		document.getElementById("displayColor").innerHTML=pickedColor;
 		wonGame=false;
-		setupTime();
+		chronoStart();
 
 	}
 
-	function setupTime(){
+	function chronoStart(){
 		time= new Date();
-		console.log(time);
+		chrono();
+	}
+
+	function chrono(){
+		var end = new Date();
+		var diff = end-time;
+		diff = new Date(diff);
+		var sec =diff.getSeconds();
+		var min = diff.getMinutes();
+		if(min<10){
+			min ="0"+min;
+		}
+		if(sec<10){
+			sec="0"+sec;
+		}
+
+		$("#clock").text(min+":"+sec);
+		timerID=setTimeout("chrono()",10);
 	}
 
 	function setupColors(colors,squares){
 		for (i=0;i<squares.length; i++){
 			var color = generateColor(colors);
-			console.log(color);
 			colors[i]=color;
 			squares[i].style.backgroundColor=colors[i];
 			squares[i].addEventListener("click", pickColor()	);
