@@ -1,0 +1,56 @@
+body{
+	font-family: "Montserrat", "Avenir";
+	margin: 0;
+	background-color:#232323;
+
+}
+
+h1{
+	text-transform: uppercase;
+	text-align: center;
+	font-weight: normal;
+	background: steelblue;
+	color: white;
+	padding: 20px 0;
+	margin: 0;
+}
+
+button{
+	border-radius: 65px;
+	background-color: steelblue;
+}
+
+button:hover{
+	background-color: red;
+}
+
+#displayColor{
+	font-size: 200%;
+}
+
+#container{
+	width: 60%;
+	margin: 20px auto;
+}
+
+#bar{
+	color: steelblue;
+	background: white;
+	height: 30px;
+	text-align: center;
+}
+
+#options{
+	float:left;
+}
+
+.square{
+	width: 30%;
+	padding-bottom: 30%;
+	background-color: purple;
+	margin: 1.66%;
+	float: left;
+	border-radius: 15px;
+	
+}
+

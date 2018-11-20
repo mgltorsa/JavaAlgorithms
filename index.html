@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>The Game Color</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
+	<script type="text/javascript" src="js/colorgame.js"></script>
+	<script type="text/javascript" src="js/requests.js"></script>
+</head>
+<body>
+	<h1>
+		El gran <br><span id="displayColor">RGB</span><br>juego del color
+		<br><span id="clock"></span>
+	</h1>
+	<div id="bar">
+		Barra
+	</div>
+	<div id="container">
+		<div class="square"></div>
+		<div class="square"></div>
+		<div class="square"></div>
+		<div class="square"></div>
+		<div class="square"></div>
+		<div class="square"></div>
+	</div>
+	<div id="options">
+		<button onclick=colors()> Generate</button>
+		<button onclick=sendServerResponse()> sendToServer </button>
+	</div>
+</body>
+</html>
