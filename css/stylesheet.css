@@ -1,60 +1,79 @@
-body{
-	font-family: "Montserrat", "Avenir";
-	margin: 0;
-	background-color:#232323;
-
+* {
+    margin: 0;
+    padding: 0
 }
-
-h1{
-	text-transform: uppercase;
-	text-align: center;
-	font-weight: normal;
-	background: steelblue;
-	color: white;
-	padding: 20px 0;
-	margin: 0;
+body {
+    background-color: #A36D90;
 }
-
-button{
-	border-radius: 65px;
-	background-color: steelblue;
+p {
+    font-size: 24px;
 }
-
-button:hover{
-	background-color: red;
+header {
+    width: 100%;
+    overflow: hidden;
+    background: #B33951;
+    margin-bottom: 20px;
 }
-
-#displayColor{
-	font-size: 200%;
+.wrapper {
+    width: 90%;
+    max-width: 1000px;
+    margin: auto;
+    overflow: hidden;
 }
-
-#container{
-	width: 100%;
-	margin: 20px auto;
-	height: 20%;
+.contentHeader {
+    display: block;
 }
-
-#bar{
-	color: steelblue;
-	background: white;
-	height: 30px;
-	text-align: center;
+.infoHeader {
+    display: inline-block;
 }
-
-#options{
-	float:left;
-	width: 100%;
-	margin: 20px auto;
-	text-align: center;
+.header2 {
+    position: fixed;
+    height: 100px;
 }
-
-.square{
-	width: 30%;
-	padding-bottom: 30%;
-	background-color: purple;
-	margin: 1.66%;
-	float: left;
-	border-radius: 15px;
-	
+.header2 .logo {
+    line-height: 100px;
+    font-size: 30px;
 }
-
+.header2 nav {
+    line-height: 100px;
+}
+.content p {
+    margin-bottom: 16px;
+}
+header .logo {
+    color: #f2f2f2;
+    font-size: 50px;
+    line-height: 200px;
+    float: left;
+}
+header nav {
+    float: right;
+    line-height: 200px;
+}
+header nav a {
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    line-height: normal;
+    font-size: 20px;
+    font-weight: bold;
+    transition: all 500ms ease;
+}
+header nav a:hover {
+    background-color: #f56f3a;
+    border-radius: 50px;
+}
+@media screen and (max-width: 950px) {
+    header .logo, header nav {
+        width: 100%;
+        text-align: center;
+        line-height: 100px;
+    }
+    .header2 {
+        height: auto;
+    }
+    .header2 .logo, .header2 nav {
+        line-height: 50px;
+    }
+}
