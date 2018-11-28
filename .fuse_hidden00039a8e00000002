@@ -35,23 +35,19 @@
                 </nav>
             </div>
         </header>
-
-        <form onsubmit="sendMessage()">
         <!-- <section class="content"> -->
         
-        <label for="name">
+          <label for="name">
             Nombre o apodo
         </label> 
         <input id="name" placeholder="Digite su apodo" required="true" type="text">
-        <label for="pass">
+            <label for="pass">
                 Mensaje secreto
-        </label>
-        <input id="pass" placeholder="Digite un mensaje secreto" required="true" type="password">
-        <button type="submit" value="submit">
+            </label>
+            <input id="pass" placeholder="Digite un mensaje secreto" required="true" type="password">
+                <button onclick="sendMessage()">
                     Click me!
-        </button>
-
-        </form>                
+                </button>                
                 <!-- </section> -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript">
         </script>
