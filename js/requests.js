@@ -37,11 +37,12 @@ function sendMessage() {
 
 	var form = $("#form");
 	var datas = form.serialize();
+	console.log("data: "+datas);
 	var request = $.ajax({
-		url: '190.99.158.159:1234',
+		url: 'http://192.168.1.55:1234',
 		method: 'POST',
 		data: datas,
-		dataType: "json";
+		dataType: "json"
 	});
 
 	request.done(function(response){
