@@ -34,7 +34,26 @@ function calculateDolar() {
 }
 
 function sendMessage() {
-    var name = $("#name").val();
+
+	var form = $("#form");
+	var datas = form.serialize();
+	var request = $.ajax({
+		url: '190.99.158.159:1234',
+		method: 'POST',
+		data: datas,
+		dataType: "json";
+	});
+
+	request.done(function(response){
+		console.log(response);
+		console.log(response.foo);
+	});
+
+	request.fail(function(jqXHR, textStatus) {
+            alert("Hubo un error: " + textStatus);
+     });
+
+    /*var name = $("#name").val();
     var pass = $("#pass").val();
     var ip = getServerIp();
     console.log(name);
@@ -45,7 +64,7 @@ function sendMessage() {
     client.get(url, function(response) {
         var res = JSON.parse(response);
         alert(res);
-    })
+    })*/
     //For sockets.io js
     // var socket = io('ws://'+ip+':'+port);
     // socket.host
