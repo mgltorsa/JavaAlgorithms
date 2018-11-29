@@ -1,7 +1,12 @@
 var myIp = 0;
 var datas = [];
+var d ="";
+var serverIp=null;
+var port =null;
+
 window.onload = function() {
     getClientIp();
+   
 }
 
 function calculateDolar() {
@@ -33,26 +38,28 @@ function calculateDolar() {
     }
 }
 
+
+
 function sendMessage() {
 
 	var form = $("#form");
 	var datas = form.serialize();
-	console.log("data: "+datas);
-	var request = $.ajax({
-		url: 'http://192.168.1.55:1234',
-		method: 'POST',
-		data: datas,
-		dataType: "json"
-	});
+	var serverIp = getServerIp();
+	var port = getPort();
+	var url = 'http://'+serverIp+':'+port;
+	var xhttpRequest = new XMLHttpRequest();
+	xhttpRequest.open("POST",url, true);
+	xhttpRequest.send();
 
-	request.done(function(response){
-		console.log(response);
-		console.log(response.foo);
-	});
+	xhttpRequest.onreadystatechange = function () {
+        if(xhttpRequest.readyState === XMLHttpRequest.DONE && xhttpRequest.status === 200) {
+            var re = xhttpRequest.responseText;
+            d=re;
+            document.writeln(re);
 
-	request.fail(function(jqXHR, textStatus) {
-            alert("Hubo un error: " + textStatus);
-     });
+        }
+    };
+
 
     /*var name = $("#name").val();
     var pass = $("#pass").val();
@@ -118,14 +125,16 @@ function getClientIp() {
 }
 
 function getServerIp() {
-    var ip = '172.30.176.27';
-    ip = '172.30.177.60';
-    ip = '192.168.1.50';
-    return ip;
+	if(serverIp===null){
+    	serverIp='172.30.181.145';
+	}
+    return serverIp;
 }
 
 function getPort() {
-    var port = 1025;
-    port = 1234;
+	if(port===null){
+		port=1234;
+	}
+   
     return port;
 }
